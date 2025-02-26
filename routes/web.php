@@ -7,3 +7,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('login',function() { return response()->json('bcd'); });
+Route::get('test',[TestController::class,'test']);
+

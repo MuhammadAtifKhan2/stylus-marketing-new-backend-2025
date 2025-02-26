@@ -16,7 +16,7 @@ class TestController extends Controller
             'password'=>bcrypt('123456'),
 
         ];
-        $user = User::find(4);
+        $user = User::find(1);
 
         $token = $user->createToken('MyApp')->accessToken;
 
