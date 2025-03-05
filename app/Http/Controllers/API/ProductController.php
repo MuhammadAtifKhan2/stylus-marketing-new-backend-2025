@@ -4,11 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\AttributeOption;
 use Validator;
-use Illuminate\Validation\Rule;
+use App\Models\Product;
 
-class AttributeOptionController extends Controller
+class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,8 +15,8 @@ class AttributeOptionController extends Controller
     public function index()
     {
         //
-        $attributeOptions = AttributeOption::all();
-        return response()->json(['success'=>true,'result'=>$attributeOptions]);
+        $products = Product::all();
+        return response()->json(['success'=>true,'result'=>$products]);
     }
 
     /**
@@ -34,32 +33,19 @@ class AttributeOptionController extends Controller
     public function store(Request $request)
     {
         //
-        
+        $validator = Validator::make($request->all(),[
+            'name'=>'required',
+            'category_id'=>'required',
+            'sub_category_id'=>'required'
+        ]);
 
-        return response()->json($request->input('name'));
-        $data = $request->all();
-        $rules = [
-            'name'=>[
-                'required',
-                // Rule::unique('attribute_options')->where(function ($query) use ($attributeData) {
-                //     return $query->where('attribute_id', $attributeData['attribute_id']);
-                // })
-                Rule::unique('attribute_options')->where(function ($query) use ($data) {
-                    return $query->where('attribute_id', $data['category_id']);
-                })
-            ],
-            'attribute_id'=>['required']
-
-            // 'attribute_id'=>['required']
-        ];
-        $validator = Validator::make($request->all(),$rules);
         if($validator->fails())
         {
             return response()->json(['success'=>false,'errors'=>$validator->errors()]);
         }
 
-
-
+        $product = Product::create($request->all());
+        return response()->json(['success'=>true,'result'=>$product]);
     }
 
     /**
