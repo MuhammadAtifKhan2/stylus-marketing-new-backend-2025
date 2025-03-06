@@ -80,6 +80,26 @@ class SubCategoryController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        //
+        $rules = [
+            "name"=>[
+                "required",
+                Rule::unique('sub_categories')->where(function($query) use ($data,$id){
+                    $query->where('category_id',$data['category_id'])->where('id','!=',$id])
+                })
+            ]
+        ];
+
+        $validator = Validator::make($request->all(),$rules);
+
+        if($validator->fails())
+        {
+            return response()->json(['status'=>false,'errors'=>$validator->errors()]);
+        }
+
+        $subCategory = SubCategory::find($id)->update($request->all());
+
+        return response()->json(['status'=>true,'result'=>$subCategory]);
     }
 
     /**
@@ -88,5 +108,9 @@ class SubCategoryController extends Controller
     public function destroy(string $id)
     {
         //
+        $subCategory = SubCategory::find($id);
+        $subCategory->delete();
+
+        return response()->json(['status'=>true,'message'=>'Sub Category Deleted Successfully']);
     }
 }

@@ -64,6 +64,13 @@ class AttributeController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $validator = Validator::make($request->all(),['name'=>'required']);
+        if($validator->fails())
+        {
+            return response()->json(['success'=>false,'errors'=>$validator->errors()]);
+        }
+        $attribute = Attribute::find($id)->update($request->all());
+        return response()->json(['success'=>true,'result'=>$attribute]);
     }
 
     /**
@@ -72,5 +79,9 @@ class AttributeController extends Controller
     public function destroy(string $id)
     {
         //
+        $attribute = Attribute::find($id);
+        $attribute->delete();
+
+        return response()->json(['status'=>true,'message'=>'Attribute Deleted successfully']);
     }
 }

@@ -65,6 +65,20 @@ class CategoryController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $rules = [
+            "name"=>"required|unique,name,".$id
+        ];
+
+        $validator = Validator::make($request->all(),$rules);
+
+        if($validator->fails())
+        {
+            return response()->json(['status'=>false,'errors'=>$validator->errors()]);
+        }
+
+        $category = Category::find($id)->update($request->all());
+
+        return response()->json(['status'=>true,'result'=>$category]);
     }
 
     /**
@@ -73,5 +87,9 @@ class CategoryController extends Controller
     public function destroy(string $id)
     {
         //
+        $category = Category::find($id);
+        $category->delete();
+
+        return response()->json(['status'=>true,'message'=>'Category Deleted successfully']);
     }
 }

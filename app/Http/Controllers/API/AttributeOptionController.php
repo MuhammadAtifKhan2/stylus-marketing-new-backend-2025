@@ -34,9 +34,6 @@ class AttributeOptionController extends Controller
     public function store(Request $request)
     {
         //
-        
-
-        return response()->json($request->input('name'));
         $data = $request->all();
         $rules = [
             'name'=>[
@@ -58,6 +55,9 @@ class AttributeOptionController extends Controller
             return response()->json(['success'=>false,'errors'=>$validator->errors()]);
         }
 
+        $attributeOption = AttributeOption::create($data);
+
+        return response()->json(['success'=>true,'result'=>$attributeOption]);
 
 
     }
@@ -84,6 +84,25 @@ class AttributeOptionController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $data = $request->all();
+        $rules = [
+            'name'=>[
+                'required',
+                Rule::unique('attribute_options')->where(function ($query) use ($data,$id) {
+                    return $query->where('attribute_id', $data['category_id'])->where('id','!=',$id);
+                })
+            ],
+            'attribute_id'=>['required']
+        ];
+        $validator = Validator::make($request->all(),$rules);
+        if($validator->fails())
+        {
+            return response()->json(['success'=>false,'errors'=>$validator->errors()]);
+        }
+         $attributeOption = AttributeOption::find($id);
+         $attributeOption->update($data);
+
+        return response()->json(['success'=>true,'result'=>$attributeOption]);
     }
 
     /**
