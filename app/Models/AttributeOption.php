@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class AttributeOption extends Model
 {
     //
-    protected $fillable = ['name','attribute_id'];
+    protected $fillable = ['name','attribute_id','image'];
 }

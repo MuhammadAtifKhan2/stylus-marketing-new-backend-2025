@@ -34,26 +34,34 @@ class AttributeOptionController extends Controller
     public function store(Request $request)
     {
         //
-        $data = $request->all();
         $rules = [
             'name'=>[
                 'required',
-                // Rule::unique('attribute_options')->where(function ($query) use ($attributeData) {
-                //     return $query->where('attribute_id', $attributeData['attribute_id']);
-                // })
                 Rule::unique('attribute_options')->where(function ($query) use ($data) {
                     return $query->where('attribute_id', $data['category_id']);
                 })
             ],
             'attribute_id'=>['required']
-
-            // 'attribute_id'=>['required']
         ];
+
+        if($request->image)
+        {
+            $rules['image'] = 'required|image|mimes:jpeg,png,jpg,gif,svg';
+        }
+
         $validator = Validator::make($request->all(),$rules);
         if($validator->fails())
         {
             return response()->json(['success'=>false,'errors'=>$validator->errors()]);
         }
+
+        if($request->image)
+        {
+            $imageName = time().$request->image->extension();
+            $request->image->move(public_path('images'), $imageName);
+            $data['image'] = $imageName;
+        }
+
 
         $attributeOption = AttributeOption::create($data);
 
@@ -94,11 +102,25 @@ class AttributeOptionController extends Controller
             ],
             'attribute_id'=>['required']
         ];
+
+        if($request->image)
+        {
+            $rules['image'] = 'required|image|mimes:jpeg,png,jpg,gif,svg';
+        }
+
         $validator = Validator::make($request->all(),$rules);
         if($validator->fails())
         {
             return response()->json(['success'=>false,'errors'=>$validator->errors()]);
         }
+
+        if($request->image)
+        {
+            $imageName = time().$request->image->extension();
+            $request->image->move(public_path('images'), $imageName);
+            $data['image'] = $imageName;
+        }
+
          $attributeOption = AttributeOption::find($id);
          $attributeOption->update($data);
 
@@ -111,5 +133,9 @@ class AttributeOptionController extends Controller
     public function destroy(string $id)
     {
         //
+        $attributeOption = AttributeOption::find($id);
+        $attributeOption->delete();
+
+        return response()->json(['success'=>true,'message'=>'Attribute option deleted successfully']);
     }
 }

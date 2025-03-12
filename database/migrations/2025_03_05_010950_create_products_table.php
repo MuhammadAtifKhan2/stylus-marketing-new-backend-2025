@@ -16,10 +16,16 @@ return new class extends Migration
             $table->string('name');
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('sub_category_id');
-
+            $table->integer('price');
+            $table->string('width')->nullable();
+            $table->string('height')->nullable();
+            $table->integer('premium')->nullable();
+            $table->integer('lamination')->nullable();
+            $table->string('hanging_options')->nullable();
+            $table->integer('wind_flaps')->nullable();
+            $table->string('description',500)->nullable();
             $table->foreign('category_id')->on('categories')->references('id');
             $table->foreign('sub_category_id')->on('sub_categories')->references('id');
-
             $table->timestamps();
         });
     }

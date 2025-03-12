@@ -65,6 +65,7 @@ class AttributeController extends Controller
     {
         //
         $validator = Validator::make($request->all(),['name'=>'required']);
+
         if($validator->fails())
         {
             return response()->json(['success'=>false,'errors'=>$validator->errors()]);

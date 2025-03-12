@@ -33,18 +33,39 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         //
-        $validator = Validator::make($request->all(),[
+        $rules = [
             'name'=>'required',
             'category_id'=>'required',
-            'sub_category_id'=>'required'
-        ]);
+            'sub_category_id'=>'required',
+            'price'=>'required'
+        ];
+
+        if($request->images)
+        {
+            $rules['filenames'] = 'required';
+            $rules['filenames.*'] = 'image';
+        }
+
+        $validator = Validator::make($request->all(),$rules);
 
         if($validator->fails())
         {
             return response()->json(['success'=>false,'errors'=>$validator->errors()]);
         }
 
-        $product = Product::create($request->all());
+        if($request->images)
+        {
+            $images = '';
+            foreach($request->images as $image)
+            {
+                $fileName = time().rand(1,100).$image->extension();
+                $image->move(public_path('uploads'),$fileName);
+                $images.=$fileName;
+            }
+            $data['images'] = $images;
+        }
+
+        $product = Product::create($data);
         return response()->json(['success'=>true,'result'=>$product]);
     }
 
@@ -70,18 +91,39 @@ class ProductController extends Controller
     public function update(Request $request, string $id)
     {
         //
-         $validator = Validator::make($request->all(),[
+        $rules = [
             'name'=>'required',
             'category_id'=>'required',
-            'sub_category_id'=>'required'
-        ]);
+            'sub_category_id'=>'required',
+            'price'=>'required'
+        ];
+
+        if($request->images)
+        {
+            $rules['filenames'] = 'required';
+            $rules['filenames.*'] = 'image';
+        }
+
+         $validator = Validator::make($request->all(),$rules);
 
         if($validator->fails())
         {
             return response()->json(['success'=>false,'errors'=>$validator->errors()]);
         }
 
-        $product = Product::find($id)->update($request->all());
+         if($request->images)
+        {
+            $images = '';
+            foreach($request->images as $image)
+            {
+                $fileName = time().rand(1,100).$image->extension();
+                $image->move(public_path('uploads'),$fileName);
+                $images.=$fileName;
+            }
+            $data['images'] = $images;
+        }
+
+        $product = Product::find($id)->update($data);
         return response()->json(['success'=>true,'result'=>$product]);
     }
 

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name',50);
             $table->unSignedBigInteger('attribute_id');
+            $table->string('image')->nullable();
             $table->foreign('attribute_id')->references('id')->on('attributes');
             $table->timestamps();
         });
