@@ -55,11 +55,24 @@ class ProductController extends Controller
 
         if($request->images)
         {
+            $totalImages = count($request->images);
             $images = '';
             foreach($request->images as $image)
             {
                 $fileName = time().rand(1,100).$image->extension();
                 $image->move(public_path('uploads'),$fileName);
+
+                $count++;
+
+                if($totalImages == $count)
+                {
+                    $images .= $fileName;
+                }
+                else
+                {
+                    $images .= $fileName.",";
+                }
+
                 $images.=$fileName;
             }
             $data['images'] = $images;
@@ -111,14 +124,27 @@ class ProductController extends Controller
             return response()->json(['success'=>false,'errors'=>$validator->errors()]);
         }
 
-         if($request->images)
+        if($request->images)
         {
+            $totalImages = count($request->images);
+
+            $count = 0;
             $images = '';
             foreach($request->images as $image)
             {
                 $fileName = time().rand(1,100).$image->extension();
                 $image->move(public_path('uploads'),$fileName);
-                $images.=$fileName;
+            
+                $count++;
+
+                if($totalImages == $count)
+                {
+                    $images .= $fileName;
+                }
+                else
+                {
+                    $images .= $fileName.",";
+                }
             }
             $data['images'] = $images;
         }

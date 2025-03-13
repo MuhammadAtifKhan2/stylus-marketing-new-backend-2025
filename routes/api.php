@@ -20,7 +20,7 @@ Route::group(['middleware'=>CheckUser::class],function(){
     Route::get('test1',function(){ return response()->json('abc'); });
 });
 
-Route::get('login',function() { return response()->json('bcd'); });
+Route::post('login',[HomeController::class,'login']);
 
 
 Route::resource('categories',CategoryController::class);
