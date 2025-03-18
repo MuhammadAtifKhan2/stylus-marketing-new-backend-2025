@@ -15,10 +15,17 @@ class HomeControlLer extends Controller
         $userData = $request->all();
 
         $validator = Validator::make($userData,[
-            'name'=>'required',
+            'first_name'=>'required',
             'email'=>'required|email|unique:users',
             'password'=>'required|min:8|confirmed',
         ]);
+
+        if(!$userData['agree_terms_and_conditions'])
+        {
+            $validator->after(function($validator){
+                $validator->errors()->add('error','Not registered, you did not agree terms and conditions');
+            });
+        }
 
         if($validator->fails())
         {
